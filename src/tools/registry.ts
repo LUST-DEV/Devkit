@@ -40,7 +40,7 @@ export const tools: readonly ToolDefinition[] = [
     category: 'Data',
     icon: Fingerprint,
     route: '/tools/uuid',
-    availability: 'planned',
+    availability: 'available',
   },
   {
     id: 'jwt',
@@ -67,7 +67,7 @@ export const tools: readonly ToolDefinition[] = [
     category: 'Security',
     icon: Hash,
     route: '/tools/hash',
-    availability: 'planned',
+    availability: 'available',
   },
 ]
 

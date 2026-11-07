@@ -15,10 +15,14 @@ const HelpPage = lazy(() => import('../pages/HelpPage').then((module) => ({ defa
 const SettingsPage = lazy(() => import('../pages/SettingsPage').then((module) => ({ default: module.SettingsPage })))
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage').then((module) => ({ default: module.NotFoundPage })))
 const Base64Page = lazy(() => import('../tools/base64/Base64Page').then((module) => ({ default: module.Base64Page })))
+const UuidPage = lazy(() => import('../tools/uuid/UuidPage').then((module) => ({ default: module.UuidPage })))
+const HashPage = lazy(() => import('../tools/hash/HashPage').then((module) => ({ default: module.HashPage })))
 
 // Implemented tools, keyed by their registry id. Tools without an entry show the placeholder page.
 const toolPages: Partial<Record<string, LazyExoticComponent<ComponentType>>> = {
   base64: Base64Page,
+  uuid: UuidPage,
+  hash: HashPage,
 }
 
 export function App() {
