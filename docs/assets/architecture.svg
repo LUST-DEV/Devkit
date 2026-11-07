@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 400" width="840" height="400" role="img" aria-labelledby="title desc">
+  <title id="title">DEVKIT architecture</title>
+  <desc id="desc">Everything runs inside the browser: the app shell routes to the tool registry, which lists the independent tools. Tools use browser APIs such as Web Crypto. No data leaves the browser.</desc>
+  <style>
+    text { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+    .bg { fill: #050b1f; stroke: #1e2a4a; stroke-width: 1; }
+    .browser { fill: none; stroke: #2f6bff; stroke-width: 2; animation: pulse 3.2s ease-in-out infinite; }
+    .label { fill: #22d3ee; font-size: 13px; font-weight: 600; }
+    .box { fill: #0a1330; stroke: #1e2a4a; stroke-width: 1.5; }
+    .name { fill: #f8fafc; font-size: 14px; font-weight: 700; }
+    .item { fill: #94a3b8; font-size: 11.5px; }
+    .planned { fill: #64748b; font-size: 11.5px; font-style: italic; }
+    .arrow { stroke: #2f6bff; stroke-width: 2; fill: none; }
+    .dot { fill: #22d3ee; animation: flow 2.4s ease-in-out infinite; }
+    .d2 { animation-delay: 0.8s; }
+    .d3 { animation-delay: 1.6s; }
+    .step { animation: appear 0.7s ease-out both; }
+    .s1 { animation-delay: 0.1s; }
+    .s2 { animation-delay: 0.5s; }
+    .s3 { animation-delay: 0.9s; }
+    .s4 { animation-delay: 1.3s; }
+    .note { fill: #f8fafc; font-size: 13px; }
+    .nonet { stroke: #22d3ee; stroke-width: 2; stroke-dasharray: 6 6; fill: none; animation: dash 1.6s linear infinite; }
+    .cross { stroke: #22d3ee; stroke-width: 2.5; stroke-linecap: round; }
+    @keyframes pulse { 0%, 100% { stroke-opacity: 0.35; } 50% { stroke-opacity: 1; } }
+    @keyframes flow { 0% { transform: translateX(0); opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { transform: translateX(40px); opacity: 0; } }
+    @keyframes appear { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes dash { to { stroke-dashoffset: -24; } }
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; }
+    }
+  </style>
+  <defs>
+    <marker id="head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2f6bff" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0.5" y="0.5" width="839" height="399" rx="18" />
+
+  <rect class="browser" x="20" y="56" width="800" height="250" rx="16" />
+  <text class="label" x="40" y="88">Your browser: everything runs here</text>
+
+  <g class="step s1">
+    <rect class="box" x="40" y="110" width="160" height="170" rx="12" />
+    <text class="name" x="56" y="140">App shell</text>
+    <text class="item" x="56" y="168">React Router</text>
+    <text class="item" x="56" y="188">Layout and sidebar</text>
+    <text class="item" x="56" y="208">Themes</text>
+    <text class="item" x="56" y="228">Error boundary</text>
+    <text class="item" x="56" y="248">404 page</text>
+  </g>
+
+  <g class="step s2">
+    <rect class="box" x="240" y="110" width="160" height="170" rx="12" />
+    <text class="name" x="256" y="140">Tool registry</text>
+    <text class="item" x="256" y="168">id and name</text>
+    <text class="item" x="256" y="188">category and icon</text>
+    <text class="item" x="256" y="208">route</text>
+    <text class="item" x="256" y="228">availability</text>
+  </g>
+
+  <g class="step s3">
+    <rect class="box" x="440" y="110" width="160" height="170" rx="12" />
+    <text class="name" x="456" y="140">Independent tools</text>
+    <text class="item" x="456" y="166">JSON</text>
+    <text class="item" x="456" y="184">Base64</text>
+    <text class="item" x="456" y="202">UUID</text>
+    <text class="item" x="456" y="220">JWT</text>
+    <text class="item" x="456" y="238">Hash</text>
+    <text class="planned" x="456" y="256">Timestamp (planned)</text>
+  </g>
+
+  <g class="step s4">
+    <rect class="box" x="640" y="110" width="160" height="170" rx="12" />
+    <text class="name" x="656" y="140">Browser APIs</text>
+    <text class="item" x="656" y="168">Web Crypto</text>
+    <text class="item" x="656" y="188">TextEncoder / Decoder</text>
+    <text class="item" x="656" y="208">atob / btoa</text>
+    <text class="item" x="656" y="228">localStorage</text>
+    <text class="item" x="656" y="246">(theme only)</text>
+  </g>
+
+  <path class="arrow" d="M 202 195 L 238 195" marker-end="url(#head)" />
+  <path class="arrow" d="M 402 195 L 438 195" marker-end="url(#head)" />
+  <path class="arrow" d="M 602 195 L 638 195" marker-end="url(#head)" />
+  <circle class="dot" cx="200" cy="195" r="4" />
+  <circle class="dot d2" cx="400" cy="195" r="4" />
+  <circle class="dot d3" cx="600" cy="195" r="4" />
+
+  <path class="nonet" d="M 420 308 L 420 338" />
+  <rect x="250" y="340" width="340" height="40" rx="10" fill="none" stroke="#1e2a4a" stroke-width="1.5" stroke-dasharray="6 6" />
+  <path class="cross" d="M 264 353 L 280 367 M 280 353 L 264 367" />
+  <text class="note" x="294" y="365">No backend. No account. No telemetry.</text>
+</svg>

@@ -18,6 +18,8 @@ fast, private, accessible and built to work offline.
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-050b1f?logo=tailwindcss&logoColor=22d3ee)
 ![Vitest](https://img.shields.io/badge/Vitest-050b1f?logo=vitest&logoColor=2f6bff)
 
+<img src="docs/assets/architecture.svg" alt="Animated diagram: the app shell, the tool registry, the independent tools and the browser APIs all run inside the browser. No backend, no account, no telemetry." width="840" />
+
 </div>
 
 ---
