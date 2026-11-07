@@ -22,7 +22,7 @@ export const tools: readonly ToolDefinition[] = [
     category: 'Data',
     icon: Braces,
     route: '/tools/json',
-    availability: 'planned',
+    availability: 'available',
   },
   {
     id: 'base64',
@@ -49,7 +49,7 @@ export const tools: readonly ToolDefinition[] = [
     category: 'Security',
     icon: KeyRound,
     route: '/tools/jwt',
-    availability: 'planned',
+    availability: 'available',
   },
   {
     id: 'timestamp',
