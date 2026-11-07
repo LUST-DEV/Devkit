@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+coverage/
+.vite/
+
+# Tests
+playwright-report/
+test-results/
+blob-report/
+
+# Environment and secrets (never commit)
+.env
+.env.*
+!.env.example
+.dev.vars
+*.pem
+*.key
+
+# Cloudflare
+.wrangler/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Editors and OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Release artifacts
+*.zip
