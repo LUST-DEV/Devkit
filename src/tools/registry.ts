@@ -31,7 +31,7 @@ export const tools: readonly ToolDefinition[] = [
     category: 'Encoding',
     icon: Binary,
     route: '/tools/base64',
-    availability: 'planned',
+    availability: 'available',
   },
   {
     id: 'uuid',
