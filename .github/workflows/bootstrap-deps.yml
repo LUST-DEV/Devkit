@@ -2,6 +2,9 @@ name: Bootstrap dependencies (one-time)
 
 on:
   workflow_dispatch:
+  push:
+    branches: [chore/scaffold]
+    paths: [.github/workflows/bootstrap-deps.yml]
 
 permissions:
   contents: write
