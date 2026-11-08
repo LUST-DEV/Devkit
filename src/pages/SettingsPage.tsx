@@ -1,3 +1,4 @@
+import { useOnboarding } from '../features/onboarding/OnboardingProvider'
 import { useTheme } from '../features/theme/ThemeProvider'
 import type { EffectsMode, ThemeMode } from '../features/theme/ThemeProvider'
 import { useToolHistory } from '../features/toolHistory/ToolHistoryProvider'
@@ -14,9 +15,12 @@ const effectsOptions: readonly { value: EffectsMode; label: string; hint: string
   { value: 'premium', label: 'Premium', hint: 'Stronger blur and soft glow.' },
 ]
 
+const secondaryButton = 'min-h-11 rounded-xl border border-edge px-4 text-sm font-medium hover:bg-edge'
+
 export function SettingsPage() {
   const { mode, setMode, effects, setEffects } = useTheme()
   const { recentsEnabled, setRecentsEnabled, clearRecents } = useToolHistory()
+  const { startTour, replayIntro } = useOnboarding()
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
@@ -72,13 +76,22 @@ export function SettingsPage() {
             <span className="block text-muted">Only tool names are kept, on this device. Never what you type.</span>
           </span>
         </label>
-        <button
-          type="button"
-          onClick={clearRecents}
-          className="rounded-xl border border-edge px-4 py-2 text-sm font-medium hover:bg-edge"
-        >
+        <button type="button" onClick={clearRecents} className={secondaryButton}>
           Clear recent tools
         </button>
+      </fieldset>
+
+      <fieldset className="glass space-y-3 rounded-2xl p-5">
+        <legend className="px-1 text-lg font-semibold">Welcome</legend>
+        <p className="text-sm text-muted">Watch the intro or the guided tour again.</p>
+        <div className="flex flex-wrap gap-3">
+          <button type="button" onClick={startTour} className={secondaryButton}>
+            Restart the guided tour
+          </button>
+          <button type="button" onClick={replayIntro} className={secondaryButton}>
+            Replay the intro
+          </button>
+        </div>
       </fieldset>
     </div>
   )

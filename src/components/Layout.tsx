@@ -2,6 +2,8 @@ import { Info, LayoutDashboard, Menu, PanelLeftClose, PanelLeftOpen, Search, Set
 import type { LucideIcon } from 'lucide-react'
 import { Suspense, useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router'
+import { Onboarding } from '../features/onboarding/Onboarding'
+import { ToolGuide } from '../features/onboarding/ToolGuide'
 import { CommandPalette } from '../features/search/CommandPalette'
 import { useToolHistory } from '../features/toolHistory/ToolHistoryProvider'
 import { getToolById } from '../tools/registry'
@@ -12,13 +14,14 @@ interface NavItem {
   label: string
   icon: LucideIcon
   end?: boolean
+  tour?: string
 }
 
 const navItems: readonly NavItem[] = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/tools', label: 'Tools', icon: Wrench },
+  { to: '/tools', label: 'Tools', icon: Wrench, tour: 'tools' },
   { to: '/help', label: 'Help', icon: Info },
-  { to: '/settings', label: 'Settings', icon: Settings },
+  { to: '/settings', label: 'Settings', icon: Settings, tour: 'settings' },
 ]
 
 function linkClass({ isActive }: { isActive: boolean }) {
@@ -42,6 +45,7 @@ function SidebarContent({ collapsed, onOpenSearch, onNavigate, onToggleCollapse 
       </p>
       <button
         type="button"
+        data-tour="search"
         onClick={onOpenSearch}
         className="flex min-h-11 items-center gap-3 rounded-xl border border-edge px-3 py-2 text-sm text-muted transition-colors hover:bg-edge hover:text-fg"
       >
@@ -55,7 +59,14 @@ function SidebarContent({ collapsed, onOpenSearch, onNavigate, onToggleCollapse 
             const Icon = item.icon
             return (
               <li key={item.to}>
-                <NavLink to={item.to} end={item.end} className={linkClass} onClick={onNavigate} title={collapsed ? item.label : undefined}>
+                <NavLink
+                  to={item.to}
+                  end={item.end}
+                  data-tour={item.tour}
+                  className={linkClass}
+                  onClick={onNavigate}
+                  title={collapsed ? item.label : undefined}
+                >
                   <Icon aria-hidden="true" className="h-5 w-5 shrink-0" />
                   <span className={collapsed ? 'sr-only' : ''}>{item.label}</span>
                 </NavLink>
@@ -64,7 +75,7 @@ function SidebarContent({ collapsed, onOpenSearch, onNavigate, onToggleCollapse 
           })}
         </ul>
       </nav>
-      <p className="flex items-center gap-2 px-3 text-xs text-muted">
+      <p data-tour="privacy" className="flex items-center gap-2 rounded-lg px-3 py-1 text-xs text-muted">
         <ShieldCheck aria-hidden="true" className="h-4 w-4 shrink-0 text-accent2" />
         <span className={collapsed ? 'sr-only' : ''}>Local only. Nothing leaves your browser.</span>
       </p>
@@ -91,6 +102,9 @@ export function Layout() {
   const { recordVisit } = useToolHistory()
   const mainRef = useRef<HTMLElement>(null)
   const isFirstRender = useRef(true)
+
+  const toolMatch = /^\/tools\/([^/]+)\/?$/.exec(location.pathname)
+  const currentTool = toolMatch ? getToolById(toolMatch[1]) : undefined
 
   // Lock the page scroll behind the drawer and close it with Escape.
   useEffect(() => {
@@ -184,6 +198,7 @@ export function Layout() {
             type="button"
             aria-label="Open menu"
             aria-expanded={drawerOpen}
+            data-tour="tools settings privacy"
             onClick={() => setDrawerOpen(true)}
             className="grid h-11 w-11 place-items-center rounded-full transition-colors hover:bg-edge"
           >
@@ -193,6 +208,7 @@ export function Layout() {
           <button
             type="button"
             aria-label="Open search"
+            data-tour="search"
             onClick={openSearch}
             className="ml-auto grid h-11 w-11 place-items-center rounded-full transition-colors hover:bg-edge"
           >
@@ -212,6 +228,9 @@ export function Layout() {
           </Suspense>
         </main>
       </div>
+
+      {currentTool && currentTool.availability === 'available' && <ToolGuide key={currentTool.id} tool={currentTool} />}
+      <Onboarding />
     </div>
   )
 }

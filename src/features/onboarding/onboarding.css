@@ -1,0 +1,52 @@
+@keyframes intro-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes intro-line {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  15%,
+  85% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes intro-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.intro-progress {
+  transform-origin: left;
+  animation: intro-progress linear both;
+}
+
+.intro-line {
+  animation: intro-line ease both;
+}
+
+.intro-orbit {
+  animation: intro-orbit 2.4s linear infinite;
+}
+
+/* Highlight of the element a tour step is talking about. */
+.tour-highlight {
+  outline: 2px solid var(--accent2) !important;
+  outline-offset: 4px;
+  box-shadow:
+    0 0 0 6px rgba(34, 211, 238, 0.18),
+    0 0 24px rgba(34, 211, 238, 0.45) !important;
+}
