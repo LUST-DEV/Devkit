@@ -10,34 +10,151 @@
   --color-accent2: var(--accent2);
 }
 
+/* Design tokens. Night blue and black, electric blue as primary, cyan as secondary. */
 :root,
 :root[data-theme='dark'] {
   color-scheme: dark;
   --app: #050b1f;
-  --panel: #0a1330;
+  --panel: rgba(14, 26, 62, 0.62);
+  --panel-solid: #0a1330;
   --fg: #f8fafc;
-  --muted: #94a3b8;
-  --edge: #1e2a4a;
+  --muted: #9aa8c1;
+  --edge: rgba(148, 163, 184, 0.2);
   --accent: #2f6bff;
   --accent2: #22d3ee;
+  --highlight: rgba(255, 255, 255, 0.08);
+  --shadow: 0 12px 32px -14px rgba(0, 0, 0, 0.75);
+  --field-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35);
+  --glow-a: rgba(47, 107, 255, 0.22);
+  --glow-b: rgba(34, 211, 238, 0.12);
+  --blur: blur(14px) saturate(140%);
 }
 
 :root[data-theme='light'] {
   color-scheme: light;
-  --app: #f4f7ff;
-  --panel: #ffffff;
+  --app: #f1f5ff;
+  --panel: rgba(255, 255, 255, 0.72);
+  --panel-solid: #ffffff;
   --fg: #0b1226;
   --muted: #475569;
-  --edge: #d5dcf0;
+  --edge: rgba(15, 23, 42, 0.14);
   --accent: #1f56e0;
   --accent2: #0e7490;
+  --highlight: rgba(255, 255, 255, 0.9);
+  --shadow: 0 12px 32px -16px rgba(15, 23, 42, 0.3);
+  --field-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.12);
+  --glow-a: rgba(31, 86, 224, 0.12);
+  --glow-b: rgba(14, 116, 144, 0.1);
+}
+
+/* Visual effects levels. Placed after the themes so they take precedence. */
+:root[data-effects='minimal'] {
+  --panel: var(--panel-solid);
+  --blur: none;
+  --shadow: none;
+  --glow-a: transparent;
+  --glow-b: transparent;
+}
+
+:root[data-effects='balanced'] {
+  --blur: blur(14px) saturate(140%);
+}
+
+:root[data-effects='premium'] {
+  --blur: blur(24px) saturate(170%);
+  --shadow: 0 18px 48px -16px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(34, 211, 238, 0.08);
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   margin: 0;
-  background: var(--app);
+  min-height: 100vh;
+  background:
+    radial-gradient(60rem 40rem at 10% -10%, var(--glow-a), transparent 60%),
+    radial-gradient(50rem 36rem at 100% 110%, var(--glow-b), transparent 55%), var(--app);
+  background-attachment: fixed;
   color: var(--fg);
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--accent2);
+    outline-offset: 2px;
+  }
+
+  /* Tool controls: comfortable touch targets, soft inset fields, gentle motion. */
+  main button,
+  main select,
+  main textarea,
+  main input:not([type='radio']):not([type='checkbox']) {
+    transition:
+      transform 150ms ease,
+      box-shadow 150ms ease,
+      background-color 150ms ease,
+      border-color 150ms ease;
+  }
+
+  main button {
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+    cursor: pointer;
+    touch-action: manipulation;
+    box-shadow: inset 0 1px 0 var(--highlight);
+  }
+
+  main button:disabled {
+    cursor: not-allowed;
+  }
+
+  main button:not(:disabled):active {
+    transform: scale(0.98);
+  }
+
+  main select,
+  main input:not([type='radio']):not([type='checkbox']) {
+    min-height: 2.75rem;
+  }
+
+  main textarea,
+  main select,
+  main input:not([type='radio']):not([type='checkbox']) {
+    box-shadow: var(--field-shadow);
+  }
+
+  main textarea:focus-visible,
+  main select:focus-visible,
+  main input:not([type='radio']):not([type='checkbox']):focus-visible {
+    box-shadow:
+      var(--field-shadow),
+      0 0 0 3px rgba(34, 211, 238, 0.28);
+  }
+
+  main label:has(> input[type='radio']),
+  main label:has(> input[type='checkbox']) {
+    min-height: 2.75rem;
+  }
+
+  @media (hover: hover) {
+    main button:not(:disabled):hover {
+      transform: translateY(-1px);
+    }
+  }
+}
+
+@layer components {
+  .glass {
+    background: var(--panel);
+    border: 1px solid var(--edge);
+    box-shadow:
+      var(--shadow),
+      inset 0 1px 0 var(--highlight);
+    -webkit-backdrop-filter: var(--blur);
+    backdrop-filter: var(--blur);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

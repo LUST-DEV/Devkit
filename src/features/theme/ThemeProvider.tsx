@@ -3,20 +3,28 @@ import type { ReactNode } from 'react'
 
 export type ThemeMode = 'dark' | 'light' | 'system'
 export type ResolvedTheme = 'dark' | 'light'
+export type EffectsMode = 'minimal' | 'balanced' | 'premium'
 
-const STORAGE_KEY = 'devkit.theme'
+const THEME_KEY = 'devkit.theme'
+const EFFECTS_KEY = 'devkit.effects'
 
 interface ThemeContextValue {
   mode: ThemeMode
   resolved: ResolvedTheme
   setMode: (mode: ThemeMode) => void
+  effects: EffectsMode
+  setEffects: (effects: EffectsMode) => void
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null)
 
+function matches(query: string): boolean {
+  return typeof window.matchMedia === 'function' && window.matchMedia(query).matches
+}
+
 function readStoredMode(): ThemeMode {
   try {
-    const value = window.localStorage.getItem(STORAGE_KEY)
+    const value = window.localStorage.getItem(THEME_KEY)
     if (value === 'dark' || value === 'light' || value === 'system') {
       return value
     }
@@ -26,13 +34,22 @@ function readStoredMode(): ThemeMode {
   return 'system'
 }
 
-function systemPrefersDark(): boolean {
-  return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-color-scheme: dark)').matches
+function readStoredEffects(): EffectsMode {
+  try {
+    const value = window.localStorage.getItem(EFFECTS_KEY)
+    if (value === 'minimal' || value === 'balanced' || value === 'premium') {
+      return value
+    }
+  } catch {
+    // Storage unavailable: fall back to the default.
+  }
+  return matches('(prefers-reduced-motion: reduce)') ? 'minimal' : 'balanced'
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [mode, setModeState] = useState<ThemeMode>(readStoredMode)
-  const [systemDark, setSystemDark] = useState<boolean>(systemPrefersDark)
+  const [effects, setEffectsState] = useState<EffectsMode>(readStoredEffects)
+  const [systemDark, setSystemDark] = useState<boolean>(() => matches('(prefers-color-scheme: dark)'))
 
   useEffect(() => {
     if (typeof window.matchMedia !== 'function') {
@@ -50,6 +67,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     document.documentElement.dataset.theme = resolved
   }, [resolved])
 
+  useEffect(() => {
+    document.documentElement.dataset.effects = effects
+  }, [effects])
+
   const value = useMemo<ThemeContextValue>(
     () => ({
       mode,
@@ -57,13 +78,22 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       setMode: (next: ThemeMode) => {
         setModeState(next)
         try {
-          window.localStorage.setItem(STORAGE_KEY, next)
+          window.localStorage.setItem(THEME_KEY, next)
+        } catch {
+          // Storage unavailable: the choice applies for this session only.
+        }
+      },
+      effects,
+      setEffects: (next: EffectsMode) => {
+        setEffectsState(next)
+        try {
+          window.localStorage.setItem(EFFECTS_KEY, next)
         } catch {
           // Storage unavailable: the choice applies for this session only.
         }
       },
     }),
-    [mode, resolved],
+    [mode, resolved, effects],
   )
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
