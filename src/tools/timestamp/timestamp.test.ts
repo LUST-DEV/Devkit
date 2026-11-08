@@ -31,8 +31,10 @@ describe('convertInput with a timestamp', () => {
   })
 
   it('honours an explicit unit', () => {
-    expect(expectDetails(convertInput('1516239022', { unit: 'milliseconds' })).iso).toBe('1970-01-01T00:25:16.239Z')
+    // 1516239022 ms is 1516239.022 s: 17 days (1468800 s) + 47439 s (13:10:39) after the epoch.
+    expect(expectDetails(convertInput('1516239022', { unit: 'milliseconds' })).iso).toBe('1970-01-18T13:10:39.022Z')
     expect(expectDetails(convertInput('1500', { unit: 'seconds' })).milliseconds).toBe(1500000)
+    expect(expectDetails(convertInput('1500', { unit: 'milliseconds' })).iso).toBe('1970-01-01T00:00:01.500Z')
   })
 
   it('supports decimal seconds and negative values', () => {

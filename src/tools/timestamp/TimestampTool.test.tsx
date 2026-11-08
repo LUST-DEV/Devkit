@@ -30,7 +30,8 @@ describe('TimestampTool', () => {
     setup()
     fireEvent.change(screen.getByLabelText('Number unit'), { target: { value: 'milliseconds' } })
     fireEvent.change(screen.getByLabelText('Timestamp or date'), { target: { value: '1516239022' } })
-    expect(screen.getByText('1970-01-01T00:25:16.239Z')).toBeInTheDocument()
+    // 1516239022 ms is 17 days, 13 h 10 min 39.022 s after the epoch.
+    expect(screen.getByText('1970-01-18T13:10:39.022Z')).toBeInTheDocument()
   })
 
   it('shows an explicit error for unrecognized input', () => {
