@@ -2,13 +2,66 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#050b1f" />
     <meta name="description" content="DEVKIT - One workspace. Every developer tool." />
     <title>DEVKIT</title>
+    <style>
+      html {
+        background: #050b1f;
+        color: #f8fafc;
+      }
+      @media (prefers-color-scheme: light) {
+        html {
+          background: #f1f5ff;
+          color: #0b1226;
+        }
+      }
+      .boot {
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: grid;
+        place-content: center;
+        justify-items: center;
+        gap: 12px;
+        font: 700 18px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        letter-spacing: 0.02em;
+      }
+      .boot-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 9999px;
+        background: #22d3ee;
+        box-shadow: 0 0 16px #22d3ee;
+        animation: boot-pulse 1.2s ease-in-out infinite;
+      }
+      @keyframes boot-pulse {
+        0%,
+        100% {
+          opacity: 0.35;
+          transform: scale(0.8);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1.15);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .boot-dot {
+          animation: none;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="boot" role="status">
+        <span class="boot-dot"></span>
+        <span>DEVKIT</span>
+      </div>
+    </div>
+    <noscript>DEVKIT needs JavaScript to run. Everything stays in your browser.</noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
