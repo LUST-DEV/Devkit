@@ -6,14 +6,16 @@ export function ToolCard({ tool }: { tool: ToolDefinition }) {
   return (
     <Link
       to={tool.route}
-      className="flex h-full items-start gap-3 rounded-lg border border-edge bg-panel p-4 hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent2"
+      className="glass flex h-full items-start gap-4 rounded-2xl p-4 transition duration-200 hover:-translate-y-0.5 hover:border-accent2"
     >
-      <Icon aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-accent2" />
+      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-edge text-accent2">
+        <Icon aria-hidden="true" className="h-5 w-5" />
+      </span>
       <span className="min-w-0">
         <span className="block font-semibold">{tool.name}</span>
         <span className="block text-sm text-muted">{tool.description}</span>
         {tool.availability === 'planned' && (
-          <span className="mt-2 inline-block rounded border border-edge px-2 py-0.5 text-xs text-muted">Coming soon</span>
+          <span className="mt-2 inline-block rounded-full border border-edge px-2 py-0.5 text-xs text-muted">Coming soon</span>
         )}
       </span>
     </Link>
