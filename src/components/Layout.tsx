@@ -1,7 +1,8 @@
 import { Info, LayoutDashboard, Menu, PanelLeftClose, PanelLeftOpen, Settings, ShieldCheck, Wrench } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-import { Suspense, useEffect, useState } from 'react'
-import { NavLink, Outlet } from 'react-router'
+import { Suspense, useEffect, useRef, useState } from 'react'
+import { NavLink, Outlet, useLocation } from 'react-router'
+import { PageSkeleton } from './PageSkeleton'
 
 interface NavItem {
   to: string
@@ -72,24 +73,42 @@ function SidebarContent({ collapsed, onNavigate, onToggleCollapse }: SidebarCont
 export function Layout() {
   const [collapsed, setCollapsed] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const location = useLocation()
+  const mainRef = useRef<HTMLElement>(null)
+  const isFirstRender = useRef(true)
 
+  // Lock the page scroll behind the drawer and close it with Escape.
   useEffect(() => {
     if (!drawerOpen) {
       return
     }
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setDrawerOpen(false)
       }
     }
     window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', onKeyDown)
+    }
   }, [drawerOpen])
+
+  // Move focus to the content after a navigation so keyboard and screen reader users land on the new page.
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+    mainRef.current?.focus({ preventScroll: true })
+  }, [location.pathname])
 
   const closeDrawer = () => setDrawerOpen(false)
 
   return (
-    <div className="flex min-h-screen text-fg">
+    <div className="flex min-h-dvh text-fg">
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded-md focus:bg-accent focus:px-3 focus:py-2 focus:text-white"
@@ -98,7 +117,7 @@ export function Layout() {
       </a>
 
       <aside
-        className={`hidden shrink-0 p-3 transition-[width] duration-200 md:sticky md:top-0 md:block md:h-screen ${collapsed ? 'w-24' : 'w-72'}`}
+        className={`hidden shrink-0 p-3 transition-[width] duration-200 md:sticky md:top-0 md:block md:h-dvh ${collapsed ? 'w-24' : 'w-72'}`}
       >
         <div className="glass h-full rounded-2xl">
           <SidebarContent collapsed={collapsed} onToggleCollapse={() => setCollapsed((value) => !value)} />
@@ -106,16 +125,16 @@ export function Layout() {
       </aside>
 
       {drawerOpen && (
-        <div className="fixed inset-0 z-40 md:hidden">
+        <div className="fixed inset-0 z-40 overscroll-contain md:hidden">
           <button type="button" aria-label="Close menu" onClick={closeDrawer} className="absolute inset-0 bg-black/60" />
-          <aside className="glass relative h-full w-72 max-w-[85vw] rounded-r-2xl">
+          <aside className="glass drawer-enter relative h-full w-72 max-w-[85vw] overflow-y-auto overscroll-contain rounded-r-2xl">
             <SidebarContent collapsed={false} onNavigate={closeDrawer} />
           </aside>
         </div>
       )}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="glass sticky top-3 z-30 mx-3 mt-3 flex items-center gap-2 rounded-full py-1 pl-1 pr-4 md:hidden">
+        <header className="glass sticky top-[max(0.75rem,env(safe-area-inset-top))] z-30 mx-3 mt-3 flex items-center gap-2 rounded-full py-1 pl-1 pr-4 md:hidden">
           <button
             type="button"
             aria-label="Open menu"
@@ -127,9 +146,16 @@ export function Layout() {
           </button>
           <span className="font-semibold">DEVKIT</span>
         </header>
-        <main id="main" tabIndex={-1} className="flex-1 px-4 py-6 sm:px-8">
-          <Suspense fallback={<p role="status" className="text-sm text-muted">Loading...</p>}>
-            <Outlet />
+        <main
+          id="main"
+          ref={mainRef}
+          tabIndex={-1}
+          className="flex-1 px-4 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] outline-none sm:px-8"
+        >
+          <Suspense fallback={<PageSkeleton />}>
+            <div key={location.pathname} className="page-enter">
+              <Outlet />
+            </div>
           </Suspense>
         </main>
       </div>
