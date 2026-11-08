@@ -31,13 +31,16 @@ export function detectTimeZone(): string {
   }
 }
 
-export function getTimeZones(): string[] {
-  let zones: string[] = []
+function readSupportedTimeZones(): string[] {
   try {
-    zones = Intl.supportedValuesOf('timeZone')
+    return Intl.supportedValuesOf('timeZone')
   } catch {
-    zones = []
+    return []
   }
+}
+
+export function getTimeZones(): string[] {
+  const zones = readSupportedTimeZones()
   return zones.includes('UTC') ? zones : ['UTC', ...zones]
 }
 
