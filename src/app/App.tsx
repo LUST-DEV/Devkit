@@ -18,6 +18,9 @@ const JsonPage = lazy(() => import('../tools/json/JsonPage').then((module) => ({
 const Base64Page = lazy(() => import('../tools/base64/Base64Page').then((module) => ({ default: module.Base64Page })))
 const UuidPage = lazy(() => import('../tools/uuid/UuidPage').then((module) => ({ default: module.UuidPage })))
 const JwtPage = lazy(() => import('../tools/jwt/JwtPage').then((module) => ({ default: module.JwtPage })))
+const TimestampPage = lazy(() =>
+  import('../tools/timestamp/TimestampPage').then((module) => ({ default: module.TimestampPage })),
+)
 const HashPage = lazy(() => import('../tools/hash/HashPage').then((module) => ({ default: module.HashPage })))
 
 // Implemented tools, keyed by their registry id. Tools without an entry show the placeholder page.
@@ -26,6 +29,7 @@ const toolPages: Partial<Record<string, LazyExoticComponent<ComponentType>>> = {
   base64: Base64Page,
   uuid: UuidPage,
   jwt: JwtPage,
+  timestamp: TimestampPage,
   hash: HashPage,
 }
 

@@ -58,7 +58,7 @@ export const tools: readonly ToolDefinition[] = [
     category: 'Time',
     icon: Clock,
     route: '/tools/timestamp',
-    availability: 'planned',
+    availability: 'available',
   },
   {
     id: 'hash',
