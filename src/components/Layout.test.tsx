@@ -41,4 +41,23 @@ describe('Layout', () => {
     expect(screen.queryByRole('button', { name: 'Close menu' })).not.toBeInTheDocument()
     expect(document.body.style.overflow).toBe('')
   })
+
+  it('opens and closes the command palette with Ctrl+K', () => {
+    renderLayout()
+    expect(screen.queryByRole('dialog', { name: 'Command palette' })).not.toBeInTheDocument()
+    fireEvent.keyDown(window, { key: 'k', ctrlKey: true })
+    expect(screen.getByRole('dialog', { name: 'Command palette' })).toBeInTheDocument()
+    fireEvent.keyDown(window, { key: 'k', ctrlKey: true })
+    expect(screen.queryByRole('dialog', { name: 'Command palette' })).not.toBeInTheDocument()
+  })
+
+  it('opens the command palette from the Cmd+K variant and from the search buttons', () => {
+    renderLayout()
+    fireEvent.keyDown(window, { key: 'K', metaKey: true })
+    expect(screen.getByRole('dialog', { name: 'Command palette' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Close search' }))
+    expect(screen.queryByRole('dialog', { name: 'Command palette' })).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Open search' }))
+    expect(screen.getByRole('dialog', { name: 'Command palette' })).toBeInTheDocument()
+  })
 })

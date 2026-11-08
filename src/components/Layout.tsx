@@ -1,7 +1,10 @@
-import { Info, LayoutDashboard, Menu, PanelLeftClose, PanelLeftOpen, Settings, ShieldCheck, Wrench } from 'lucide-react'
+import { Info, LayoutDashboard, Menu, PanelLeftClose, PanelLeftOpen, Search, Settings, ShieldCheck, Wrench } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Suspense, useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router'
+import { CommandPalette } from '../features/search/CommandPalette'
+import { useToolHistory } from '../features/toolHistory/ToolHistoryProvider'
+import { getToolById } from '../tools/registry'
 import { PageSkeleton } from './PageSkeleton'
 
 interface NavItem {
@@ -25,17 +28,27 @@ function linkClass({ isActive }: { isActive: boolean }) {
 
 interface SidebarContentProps {
   collapsed: boolean
+  onOpenSearch: () => void
   onNavigate?: () => void
   onToggleCollapse?: () => void
 }
 
-function SidebarContent({ collapsed, onNavigate, onToggleCollapse }: SidebarContentProps) {
+function SidebarContent({ collapsed, onOpenSearch, onNavigate, onToggleCollapse }: SidebarContentProps) {
   return (
     <div className="flex h-full flex-col gap-4 p-3">
       <p className="flex items-center gap-2 px-3 pt-2 text-lg font-bold tracking-tight">
         <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full bg-accent2 shadow-[0_0_12px_var(--accent2)]" />
         <span className={collapsed ? 'sr-only' : ''}>DEVKIT</span>
       </p>
+      <button
+        type="button"
+        onClick={onOpenSearch}
+        className="flex min-h-11 items-center gap-3 rounded-xl border border-edge px-3 py-2 text-sm text-muted transition-colors hover:bg-edge hover:text-fg"
+      >
+        <Search aria-hidden="true" className="h-5 w-5 shrink-0" />
+        <span className={collapsed ? 'sr-only' : 'flex-1 text-left'}>Search</span>
+        {!collapsed && <kbd className="rounded-md border border-edge px-1.5 py-0.5 text-xs">Ctrl K</kbd>}
+      </button>
       <nav aria-label="Main" className="flex-1">
         <ul className="space-y-1">
           {navItems.map((item) => {
@@ -73,7 +86,9 @@ function SidebarContent({ collapsed, onNavigate, onToggleCollapse }: SidebarCont
 export function Layout() {
   const [collapsed, setCollapsed] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [paletteOpen, setPaletteOpen] = useState(false)
   const location = useLocation()
+  const { recordVisit } = useToolHistory()
   const mainRef = useRef<HTMLElement>(null)
   const isFirstRender = useRef(true)
 
@@ -96,6 +111,18 @@ export function Layout() {
     }
   }, [drawerOpen])
 
+  // Ctrl+K (Cmd+K on macOS) opens or closes the command palette.
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
+        setPaletteOpen((open) => !open)
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
+
   // Move focus to the content after a navigation so keyboard and screen reader users land on the new page.
   useEffect(() => {
     if (isFirstRender.current) {
@@ -105,7 +132,16 @@ export function Layout() {
     mainRef.current?.focus({ preventScroll: true })
   }, [location.pathname])
 
+  // Remember which tool was opened (the tool name only, never its content).
+  useEffect(() => {
+    const match = /^\/tools\/([^/]+)\/?$/.exec(location.pathname)
+    if (match && getToolById(match[1])) {
+      recordVisit(match[1])
+    }
+  }, [location.pathname, recordVisit])
+
   const closeDrawer = () => setDrawerOpen(false)
+  const openSearch = () => setPaletteOpen(true)
 
   return (
     <div className="flex min-h-dvh text-fg">
@@ -120,7 +156,7 @@ export function Layout() {
         className={`hidden shrink-0 p-3 transition-[width] duration-200 md:sticky md:top-0 md:block md:h-dvh ${collapsed ? 'w-24' : 'w-72'}`}
       >
         <div className="glass h-full rounded-2xl">
-          <SidebarContent collapsed={collapsed} onToggleCollapse={() => setCollapsed((value) => !value)} />
+          <SidebarContent collapsed={collapsed} onOpenSearch={openSearch} onToggleCollapse={() => setCollapsed((value) => !value)} />
         </div>
       </aside>
 
@@ -128,13 +164,22 @@ export function Layout() {
         <div className="fixed inset-0 z-40 overscroll-contain md:hidden">
           <button type="button" aria-label="Close menu" onClick={closeDrawer} className="absolute inset-0 bg-black/60" />
           <aside className="glass drawer-enter relative h-full w-72 max-w-[85vw] overflow-y-auto overscroll-contain rounded-r-2xl">
-            <SidebarContent collapsed={false} onNavigate={closeDrawer} />
+            <SidebarContent
+              collapsed={false}
+              onNavigate={closeDrawer}
+              onOpenSearch={() => {
+                closeDrawer()
+                openSearch()
+              }}
+            />
           </aside>
         </div>
       )}
 
+      {paletteOpen && <CommandPalette onClose={() => setPaletteOpen(false)} />}
+
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="glass sticky top-[max(0.75rem,env(safe-area-inset-top))] z-30 mx-3 mt-3 flex items-center gap-2 rounded-full py-1 pl-1 pr-4 md:hidden">
+        <header className="glass sticky top-[max(0.75rem,env(safe-area-inset-top))] z-30 mx-3 mt-3 flex items-center gap-2 rounded-full py-1 pl-1 pr-1 md:hidden">
           <button
             type="button"
             aria-label="Open menu"
@@ -145,6 +190,14 @@ export function Layout() {
             <Menu aria-hidden="true" className="h-5 w-5" />
           </button>
           <span className="font-semibold">DEVKIT</span>
+          <button
+            type="button"
+            aria-label="Open search"
+            onClick={openSearch}
+            className="ml-auto grid h-11 w-11 place-items-center rounded-full transition-colors hover:bg-edge"
+          >
+            <Search aria-hidden="true" className="h-5 w-5" />
+          </button>
         </header>
         <main
           id="main"

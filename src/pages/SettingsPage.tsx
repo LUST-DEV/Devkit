@@ -1,5 +1,6 @@
 import { useTheme } from '../features/theme/ThemeProvider'
 import type { EffectsMode, ThemeMode } from '../features/theme/ThemeProvider'
+import { useToolHistory } from '../features/toolHistory/ToolHistoryProvider'
 
 const themeOptions: readonly { value: ThemeMode; label: string }[] = [
   { value: 'dark', label: 'Dark' },
@@ -15,6 +16,7 @@ const effectsOptions: readonly { value: EffectsMode; label: string; hint: string
 
 export function SettingsPage() {
   const { mode, setMode, effects, setEffects } = useTheme()
+  const { recentsEnabled, setRecentsEnabled, clearRecents } = useToolHistory()
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
@@ -54,6 +56,29 @@ export function SettingsPage() {
             </span>
           </label>
         ))}
+      </fieldset>
+
+      <fieldset className="glass space-y-3 rounded-2xl p-5">
+        <legend className="px-1 text-lg font-semibold">Recent tools</legend>
+        <label className="flex items-start gap-3 py-1 text-sm">
+          <input
+            type="checkbox"
+            checked={recentsEnabled}
+            onChange={(event) => setRecentsEnabled(event.target.checked)}
+            className="mt-0.5 h-5 w-5 accent-accent"
+          />
+          <span>
+            <span className="block font-medium">Remember recently used tools</span>
+            <span className="block text-muted">Only tool names are kept, on this device. Never what you type.</span>
+          </span>
+        </label>
+        <button
+          type="button"
+          onClick={clearRecents}
+          className="rounded-xl border border-edge px-4 py-2 text-sm font-medium hover:bg-edge"
+        >
+          Clear recent tools
+        </button>
       </fieldset>
     </div>
   )

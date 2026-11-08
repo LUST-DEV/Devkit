@@ -1,6 +1,8 @@
-import { Link } from 'react-router'
 import { ToolCard } from '../components/ToolCard'
-import { tools } from '../tools/registry'
+import { ToolPills } from '../components/ToolPills'
+import { useToolHistory } from '../features/toolHistory/ToolHistoryProvider'
+import { getToolById, tools } from '../tools/registry'
+import type { ToolDefinition } from '../tools/registry'
 
 const stats = [
   { value: String(tools.length), label: 'tools' },
@@ -8,7 +10,15 @@ const stats = [
   { value: '0', label: 'telemetry events' },
 ]
 
+function pickTools(ids: readonly string[]): ToolDefinition[] {
+  return ids.map((id) => getToolById(id)).filter((tool): tool is ToolDefinition => tool !== undefined)
+}
+
 export function HomePage() {
+  const { favorites, recents, recentsEnabled } = useToolHistory()
+  const favoriteTools = pickTools(favorites)
+  const recentTools = recentsEnabled ? pickTools(recents) : []
+
   return (
     <div className="mx-auto max-w-4xl space-y-8">
       <header className="glass space-y-2 rounded-3xl p-6 sm:p-8">
@@ -26,25 +36,9 @@ export function HomePage() {
         ))}
       </ul>
 
-      <nav aria-label="Quick access" className="space-y-3">
-        <h2 className="text-lg font-semibold">Quick access</h2>
-        <ul className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto overscroll-x-contain px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
-          {tools.map((tool) => {
-            const Icon = tool.icon
-            return (
-              <li key={tool.id} className="shrink-0 snap-start">
-                <Link
-                  to={tool.route}
-                  className="glass flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-medium transition hover:border-accent2"
-                >
-                  <Icon aria-hidden="true" className="h-4 w-4 text-accent2" />
-                  {tool.name}
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
-      </nav>
+      {favoriteTools.length > 0 && <ToolPills label="Favorites" items={favoriteTools} />}
+      {recentTools.length > 0 && <ToolPills label="Recent" items={recentTools} />}
+      <ToolPills label="Quick access" items={tools} />
 
       <section aria-labelledby="home-tools">
         <h2 id="home-tools" className="mb-3 text-lg font-semibold">
