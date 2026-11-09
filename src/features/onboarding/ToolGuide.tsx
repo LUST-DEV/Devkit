@@ -33,6 +33,7 @@ export function ToolGuide({ tool }: { tool: ToolDefinition }) {
       <button
         ref={triggerRef}
         type="button"
+        data-tour="guide"
         onClick={() => setOpen(true)}
         className="glass fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-30 flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-medium transition hover:border-accent2"
       >

@@ -25,7 +25,7 @@ export function SettingsPage() {
     <div className="mx-auto max-w-2xl space-y-6">
       <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
 
-      <fieldset className="glass space-y-1 rounded-2xl p-5">
+      <fieldset data-tour="theme" className="glass space-y-1 rounded-2xl p-5">
         <legend className="px-1 text-lg font-semibold">Theme</legend>
         {themeOptions.map((option) => (
           <label key={option.value} className="flex items-center gap-3 text-sm">

@@ -19,9 +19,9 @@ interface NavItem {
 
 const navItems: readonly NavItem[] = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/tools', label: 'Tools', icon: Wrench, tour: 'tools' },
+  { to: '/tools', label: 'Tools', icon: Wrench, tour: 'nav-tools' },
   { to: '/help', label: 'Help', icon: Info },
-  { to: '/settings', label: 'Settings', icon: Settings, tour: 'settings' },
+  { to: '/settings', label: 'Settings', icon: Settings, tour: 'nav-settings' },
 ]
 
 function linkClass({ isActive }: { isActive: boolean }) {
@@ -198,7 +198,7 @@ export function Layout() {
             type="button"
             aria-label="Open menu"
             aria-expanded={drawerOpen}
-            data-tour="tools settings privacy"
+            data-tour="menu"
             onClick={() => setDrawerOpen(true)}
             className="grid h-11 w-11 place-items-center rounded-full transition-colors hover:bg-edge"
           >
@@ -230,7 +230,19 @@ export function Layout() {
       </div>
 
       {currentTool && currentTool.availability === 'available' && <ToolGuide key={currentTool.id} tool={currentTool} />}
-      <Onboarding />
+      <Onboarding
+        controls={{
+          openDrawer: () => setDrawerOpen(true),
+          closeAll: () => {
+            setDrawerOpen(false)
+            setPaletteOpen(false)
+          },
+          openSearch: () => {
+            setDrawerOpen(false)
+            setPaletteOpen(true)
+          },
+        }}
+      />
     </div>
   )
 }
