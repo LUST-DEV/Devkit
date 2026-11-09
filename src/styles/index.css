@@ -259,9 +259,9 @@ body {
 
   input[type='checkbox']::before {
     content: '';
-    width: 28%;
-    height: 56%;
-    margin-top: -8%;
+    width: 30%;
+    height: 58%;
+    margin-top: -10%;
     border: solid #ffffff;
     border-width: 0 2px 2px 0;
     transform: rotate(45deg) scale(0);
@@ -293,6 +293,14 @@ body {
     opacity: 0.5;
     cursor: not-allowed;
   }
+}
+
+/* The same comfortable size for every radio button and checkbox, whatever size class a component sets.
+   Unlayered so it wins over utilities. */
+input[type='radio'],
+input[type='checkbox'] {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 /* Minimal effects: no motion beyond what is needed, no glow. Unlayered so it wins. */
