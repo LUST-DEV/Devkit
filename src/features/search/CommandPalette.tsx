@@ -83,6 +83,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
             ref={inputRef}
             type="text"
             role="combobox"
+            data-tour="palette-input"
             aria-expanded="true"
             aria-controls={listId}
             aria-activedescendant={results[active] ? `${listId}-${active}` : undefined}

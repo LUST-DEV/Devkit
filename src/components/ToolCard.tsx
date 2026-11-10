@@ -3,7 +3,13 @@ import { Link } from 'react-router'
 import { useToolHistory } from '../features/toolHistory/ToolHistoryProvider'
 import type { ToolDefinition } from '../tools/registry'
 
-export function ToolCard({ tool }: { tool: ToolDefinition }) {
+interface ToolCardProps {
+  tool: ToolDefinition
+  // Marks the card the guided tour points at.
+  isFirst?: boolean
+}
+
+export function ToolCard({ tool, isFirst = false }: ToolCardProps) {
   const Icon = tool.icon
   const { favorites, toggleFavorite } = useToolHistory()
   const isFavorite = favorites.includes(tool.id)
@@ -12,6 +18,7 @@ export function ToolCard({ tool }: { tool: ToolDefinition }) {
     <div className="relative h-full">
       <Link
         to={tool.route}
+        data-tour={isFirst ? 'tool-first' : undefined}
         className="glass flex h-full items-start gap-4 rounded-2xl p-4 pr-16 transition duration-200 hover:-translate-y-0.5 hover:border-accent2"
       >
         <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-edge text-accent2">
@@ -27,6 +34,7 @@ export function ToolCard({ tool }: { tool: ToolDefinition }) {
       </Link>
       <button
         type="button"
+        data-tour={isFirst ? 'favorite-first' : undefined}
         aria-pressed={isFavorite}
         aria-label={`Favorite ${tool.name}`}
         onClick={() => toggleFavorite(tool.id)}
